@@ -6,6 +6,7 @@ const app = express();
 
 /**
  * Implementacion del playground de Graphql
+ * Aqui es donde se crea el servidor HTTP (en mi caso con express)
  */
 app.use(
     "/graphql",
