@@ -5,9 +5,13 @@ const productType = new GraphQLObjectType({
     name: 'Product',
     fields: ( ) => ({
         id: { type: GraphQLID },
-        name: {
-            type: GraphQLString,
-            resolve(parent, args){
+        name: { // nombre de la propiedad
+            type: GraphQLString, // Es el tipo de dato que corresponde a la propiedad
+            resolve(parent, args){ // Resolver de la propiedad
+                /**
+                 * Cuando ejecutes una query proba pedir mas y menos propiedades
+                 * y verifica en la consola que hay campos que se ejecutan y otros que no.
+                 */
                 console.log('Se ejecuto el name resolver')
                 return descriptions.find(description => description.id == parent.id_type )?.name
             }
