@@ -4,11 +4,11 @@ Ejemplo practico de una implementacion de GraphQL con NodeJs.
 
 ## El problema con las RESTAPIs y modelos de datos estaticos.
 
-Imaginemos que somos una Red Social (como Facebook) y necesitamos poder mostrar el perfil de un usuario en un telefono o en una pagina web. En la pagina web mostramos todo los datos del usuario ya que tenemos lugar en pantalla... Peeeeero, si estamos en un telefono no tenemos mucho espacio para mostrar todo asi que solo mostramos los datos minimos con lo cual surgen los siguientes problemas:
+Imaginemos que somos una Red Social (como Facebook) y necesitamos poder mostrar el perfil de un usuario en un telefono o en una pagina web. En la pagina web mostrariamos todo los datos del usuario ya que tenemos lugar en pantalla... Peeeeero, si estamos en un telefono no tenemos mucho espacio en pantalla asi que solo mostramos los datos minimos. Si usaramos una Rest Api tradicional nos encontrariamos con los siguientes problemas:
 
-**- Traemos datos de mas:** Si usamos el mismo endpoint para ambos casos, en el telefono traeremos informacion de que no usaremos (ya que no vamos a poder mostrar todo en pantalla), consumiremos datos y bateria posicionando nuesta APP en los primeros puestos de consumo de estos preciados recursos (con lo cual, si no somos facebook, nos arriesgamos a que nos desinstalen).
+**- Solicitariamos informacion de mas:** Si usamos el mismo endpoint para ambos casos, en el telefono traeremos informacion que no usaremos (ya que no vamos a poder mostrar todo en pantalla), consumiremos datos y bateria posicionando nuesta APP en los primeros puestos de consumo de estos preciados recursos (con lo cual, si no somos facebook, nos arriesgamos a que nos desinstalen).
 
-**- Tenemos codigo duplicado:** Si hacemos dos endpoints (uno para web y otro para telefono) deberemos mantenerlos a ambos y no estamos teniendo en cuenta que podemos crecer y empezar a soportar tablets o smartTVs.
+**- Deberiamos tener dos endpoint para cada dispositivo:** Si hacemos dos endpoints (uno para web y otro para telefono) deberemos mantener ambos funcionando. Tendremos problemas si deseamos expandirnos a otras plataformas (tablets o smartTVs). Incluso, si reutilizamos el codigo fuente para ambos endpoint, estariamos obligando a nuestro servidor a calcular toda la informacion de manera innecesaria.
 
 <br/>
 Ohh.. y ahora... ¿quien podra ayudarnos?
@@ -19,9 +19,9 @@ Ohh.. y ahora... ¿quien podra ayudarnos?
 
 # Resolviendo problemas con consultas en tiempo de ejecucion (query API)
 
-Para resolver el problema planteado en el punto anterior Facebook creo una herramienta que permite ejecutar *querys* a una API como si lo hicieramos contra una base de datos relacional (SQL)
+Para resolver el problema presentado en el punto anterior Facebook creo una GraphQL. Esta herramienta nos permite ejecutar *querys* a una API como si lo hicieramos contra una base de datos relacional (SQL)
 
-De esta forma el problema anterior se resolveria con un solo endpoint y pidiendo solo la informacion necesaria para un telefono y utilizando el mismo endpoint pidiendo la informacion completa para la WEB.
+De esta forma el caso anterior se resolveria con un solo endpoint y pidiendo solo la informacion necesaria para un telefono y utilizando el mismo endpoint pidiendo la informacion completa para la WEB.
 
 ```
 // Ejemplo de una query que me traeria informacion para un telefono
@@ -31,6 +31,7 @@ De esta forma el problema anterior se resolveria con un solo endpoint y pidiendo
         name
         lastName
         mobileProfileImage
+        haveNotification
         lastPublications {
             mobileImage
             title
@@ -46,11 +47,13 @@ De esta forma el problema anterior se resolveria con un solo endpoint y pidiendo
     UserProfile(email: 'example@gmail.com') {
         name
         lastName
+        profileDescription
         webProfileImage
         friends {
             webImage
             name
             lastName
+            profileUrl
         }
         lastPublications {
             webImage
@@ -60,13 +63,15 @@ De esta forma el problema anterior se resolveria con un solo endpoint y pidiendo
             webImage
             title
         }
+        notifications{
+            title
+            notificationType
+        }
     }
 }
 ```
 
 ¿Como resolveriamos esto con una REST API sin afectar la performance ni traer informacion de mas?
-
-
 
 # Como funciona GraphQL
 
